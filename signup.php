@@ -10,7 +10,7 @@ $password=$_POST['password'];
 if (!is_null($name) && !is_null($email) && !is_null($password)){
 
     $dbfunction=new dbfunction();
-    $response['signupstatus']=$dbfunction->signup($name,password_hash($password, PASSWORD_DEFAULT, user_pass_salt),$email);
+    $response=$dbfunction->signup($name,password_hash($password, PASSWORD_DEFAULT, user_pass_salt),$email);
     echo json_encode($response);
 
 }else{
