@@ -95,7 +95,62 @@ return $exist;
 
 }
 
+function signin($email,$password){
+   if($this->checkuserexist($email)){
+      $stmt=$this->dbconn->prepare("SELECT id from user WHERE email=? AND password=?");
+      $stmt->bind_param("ss",$email,$password);
+      $execute2=$stmt->execute();
+      $result=$stmt->get_result();
+      if($result->num_rows>0){
 
+         $stmt=$this->dbconn->prepare("SELECT id from user WHERE email=?");
+         $stmt->bind_param("s",$email);
+         $execute2=$stmt->execute();
+         $getid=$stmt->get_result()->fetch_assoc();
+         $this->dbconn->close();
+     
+        
+     
+         $currenttime = new DateTime();
+        $currenttimestamp=$currenttime->getTimestamp();
+     
+        $exptime = new DateTime('tomorrow');
+        $exptime->format('Y-m-d H:i:s');
+        $exptimestamp=$exptime->getTimestamp();
+     
+     
+        $payload = array(
+        "userid"=>$getid['id'],
+         "iss" => "https://www.tnpscquiz.com",
+         "aud" => "https://www.tnpscquiz.com",
+         "iat" => $currenttimestamp,
+         "nbf" => $currenttimestamp,
+         "exp" => $exptimestamp
+     );
+     
+     $jwt = JWT::encode($payload, $this->jwtkey);
+   $response['status']=true;
+   $response['jwt']=$jwt;
+      }
+      else{
+   $response['status']=false;
+   $response['reason']='wrong password';
+      }
+   
+   }else{
+      $response['status']=false;
+      $response['reason']='user didn\'t exists';
+   }
+   return $response;
+   }
+   
+   
+   
+   
+   
+   
+   
+   
 
 
 }
