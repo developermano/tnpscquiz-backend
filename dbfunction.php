@@ -146,11 +146,36 @@ function signin($email,$password){
    
    
    
+function jwttouserid($jwt){
+   try {
+      $decoded = JWT::decode($jwt, $this->jwtkey, array('HS256'));
+  $decoded_array = (array) $decoded;
+  $response['isjwt']=true;
+  $response['id']=$decoded_array['userid'];
+  return $response;
+   } catch (Exception $e) {
+      $response['isjwt']=false;
+   }
+} 
    
+  function profileinfo($token){
+   $preresult=$this->jwttouserid($token);
+   if($preresult['isjwt']){
+
+   $stmt=$this->dbconn->prepare("SELECT * from user WHERE id=?");
+   $stmt->bind_param("i",$preresult['id']);
+   $execute=$stmt->execute();
+   $getresult=$stmt->get_result()->fetch_assoc();
+   $this->dbconn->close();
+$response['name']=$getresult['name'];
+$response['email']=$getresult['email'];
+  }else{
+     $response['signinstatus']=false;
+  }
+
+  return $response;
    
-   
-   
-   
+}  
 
 
 }
