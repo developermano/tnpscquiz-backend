@@ -178,6 +178,18 @@ $response['email']=$getresult['email'];
 }  
 
 
+function isauth($token){
+
+  try {
+   $decoded = JWT::decode($token, $this->jwtkey, array('HS256'));
+  $response=true;
+  } catch (Exception $e) {
+   $response=false;
+  }
+  
+return $response;
+}
+
 }
 
 ?>
