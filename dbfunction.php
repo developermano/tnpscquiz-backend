@@ -190,6 +190,25 @@ function isauth($token){
 return $response;
 }
 
+
+function getquestionbyrandom($limit){
+//we need to change the function back
+//because i give question with answer.
+   $stmt=$this->dbconn->prepare("SELECT * from quiz ORDER BY RAND () LIMIT 0,?");
+   $stmt->bind_param("i",$limit);
+   $execute=$stmt->execute();
+   $result=$stmt->get_result();
+   $this->dbconn->close();
+   while ($row = $result->fetch_assoc()) {
+     
+      $prefinalresult[]=$row;
+  }
+  $finalresult=json_encode($prefinalresult);
+   return $finalresult;
+
+}
+
+
 }
 
 ?>
