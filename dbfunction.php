@@ -472,6 +472,28 @@ function adminlogin($email,$password){
 
         }
 
+
+
+function addquestion($token,$question,$option1,$option2,$option3,$option4,$answer,$topic,$subtopic){
+
+if($this->isauthadmin($token)){
+   $stmt=$this->dbconn->prepare("INSERT INTO `quiz` (`question`, `option1`, `option2`, `option3`, `option4`, `answer`, `topic`, `subtopic`) VALUES (?,?,?,?,?,?,?,?)");
+      $stmt->bind_param("ssssssss",$question,$option1,$option2,$option3,$option4,$answer,$topic,$subtopic);
+      $execute=$stmt->execute();
+      $stmt->close();
+
+      if($execute){
+         $response['questionadded']=true;
+      }else{
+         $response['questionadded']=false;
+      }
+   }else{
+      $response['questionadded']=false;
+   }
+      return $response;
+}
+
+
 }
 
 ?>
