@@ -343,6 +343,93 @@ function adminlogin($email,$password){
       }
 
 
+
+
+      function isauthadmin($token){
+
+         try {
+          $decoded = JWT::decode($token, $this->jwtkey, array('HS256'));
+          $decoded_array = (array) $decoded;
+          if($decoded_array["isadmin"]==true){
+            $response=true;
+          }else{
+            $response=false;
+          }
+          
+         
+         } catch (Exception $e) {
+          $response=false;
+         }
+         
+       return $response;
+       }
+
+
+
+
+
+      function addadmin($name,$password,$email,$token){
+   
+        if($this->isauthadmin($token)){
+         if(!$this->checkadminexist($email)){
+            $stmt=$this->dbconn->prepare("INSERT INTO admin (name,password,email) VALUES (?, ?, ?)");
+            $stmt->bind_param("sss",$name,$password,$email);
+            $execute=$stmt->execute();
+            $stmt->close();
+            
+        
+            if($execute){
+            $stmt=$this->dbconn->prepare("SELECT id from admin WHERE email=?");
+            $stmt->bind_param("s",$email);
+            $execute2=$stmt->execute();
+            $getid=$stmt->get_result()->fetch_assoc();
+            $this->dbconn->close();
+        
+           
+        
+            $currenttime = new DateTime();
+           $currenttimestamp=$currenttime->getTimestamp();
+        
+           $exptime = new DateTime('tomorrow');
+           $exptime->format('Y-m-d H:i:s');
+           $exptimestamp=$exptime->getTimestamp();
+        
+        
+           $payload = array(
+             "isadmin"=>true,
+             "adminid"=>$getid['id'],
+            "iss" => "https://www.tnpscquiz.com",
+            "aud" => "https://www.tnpscquiz.com",
+            "iat" => $currenttimestamp,
+            "nbf" => $currenttimestamp,
+            "exp" => $exptimestamp
+        );
+        
+        $jwt = JWT::encode($payload, $this->jwtkey);
+        
+        //setup result
+        $res['status']=$execute2;
+        $res['token']=$jwt;
+            }
+         else{
+               $res["status"]=false;
+               $res["reason"]="dbconnection is not possible";
+            }
+ 
+        
+          }else{
+            $res['status']=false;
+            $res['reason']="admin already exists";
+          
+          }
+        }else{
+         $res['status']=false;
+         $res['reason']="you are not a admin";}
+     return $res;
+        }
+
+
+
 }
 
 ?>
