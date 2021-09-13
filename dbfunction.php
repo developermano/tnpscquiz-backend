@@ -430,6 +430,48 @@ function adminlogin($email,$password){
 
 
 
+
+        function jwttoadminid($jwt){
+         try {
+            $decoded = JWT::decode($jwt, $this->jwtkey, array('HS256'));
+        $decoded_array = (array) $decoded;
+        $response['isjwt']=true;
+        $response['adminid']=$decoded_array['adminid'];
+        return $response;
+         } catch (Exception $e) {
+            $response['isjwt']=false;
+         }
+      } 
+
+
+        function addblogpost($token,$title,$description,$content){
+
+            $jwttoadminid=$this->jwttoadminid($token);
+         
+            if($jwttoadminid["adminid"]!=null)
+            {
+
+            $stmt=$this->dbconn->prepare("INSERT INTO `blog` (`title`, `description`, `content`) VALUES (?,?,?)");
+            $stmt->bind_param("sss",$title,$description,$content);
+            $execute=$stmt->execute();
+         
+            if($execute){
+               $response['blogadded']=true;
+            }else{
+               $response['blogadded']=false;
+            }
+         
+         }
+            else{
+               $response['blogadded']=false;
+               $response['reason']="you are not a admin";
+            }
+         
+            return $response;
+         
+
+        }
+
 }
 
 ?>
