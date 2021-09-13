@@ -209,6 +209,34 @@ function getquestionbyrandom($limit){
 }
 
 
+function addscore($token,$score){
+   $jwttouserid=$this->jwttouserid($token);
+
+   if($jwttouserid["isjwt"]==true)
+   {
+   $userid=$jwttouserid["id"];
+   $currentdate=date("Y-m-d");
+
+   $stmt=$this->dbconn->prepare("INSERT INTO score(userid,score,date) VALUES (?,?,?)");
+   $stmt->bind_param("iis",$userid,$score,$currentdate);
+   $execute=$stmt->execute();
+
+   if($execute){
+      $response['scoreisadded']=true;
+   }else{
+      $response['scoreisadded']=false;
+   }
+
+}
+   else{
+      $response['scoreisadded']=false;
+   }
+
+$stmt->close();
+   return $response;
+}
+
+
 }
 
 ?>

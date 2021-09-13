@@ -13,6 +13,6 @@ if (!is_null($limit)){
     echo json_encode($response);
 
 }else{
-    echo "i require token";
+    echo "i require limit";
 }
 ?>
