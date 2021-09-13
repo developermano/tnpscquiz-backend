@@ -237,6 +237,22 @@ $stmt->close();
 }
 
 
+function listscore(){
+   $currentdate=date("Y-m-d");
+   $stmt=$this->dbconn->prepare("SELECT user.name,score.score from score INNER JOIN user ON score.userid = user.id AND score.date=?");
+   $stmt->bind_param("s",$currentdate);
+   $execute=$stmt->execute();
+   $result=$stmt->get_result();
+   $this->dbconn->close();
+   while ($row = $result->fetch_assoc()) {
+     
+      $prefinalresult[]=$row;
+  }
+  $finalresult=json_encode($prefinalresult);
+   return $finalresult;
+
+}
+
 }
 
 ?>
