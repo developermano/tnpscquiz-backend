@@ -10,7 +10,7 @@ $password=$_POST['password'];
 if (!is_null($email) && !is_null($password)){
 
     $dbfunction=new dbfunction();
-    $response=$dbfunction->signin($email,password_hash($password, PASSWORD_DEFAULT, user_pass_salt));
+    $response=$dbfunction->adminlogin($email,password_hash($password, PASSWORD_DEFAULT, user_pass_salt));
     echo json_encode($response);
 
 }else{
