@@ -203,8 +203,8 @@ function getquestionbyrandom($limit){
      
       $prefinalresult[]=$row;
   }
-  $finalresult=json_encode($prefinalresult);
-   return $finalresult;
+  
+   return $prefinalresult;
 
 }
 
@@ -248,10 +248,30 @@ function listscore(){
      
       $prefinalresult[]=$row;
   }
-  $finalresult=json_encode($prefinalresult);
-   return $finalresult;
+
+   return $prefinalresult;
 
 }
+
+
+
+function getlastfiveblogpost(){
+
+
+   $stmt=$this->dbconn->prepare("SELECT * from blog ORDER BY id DESC limit 0,5");
+   $execute=$stmt->execute();
+   $result=$stmt->get_result();
+   $this->dbconn->close();
+   while ($row = $result->fetch_assoc()) {
+     
+      $prefinalresult[]=$row;
+  }
+
+   return $prefinalresult;
+
+   
+}
+
 
 }
 
